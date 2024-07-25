@@ -1,0 +1,3 @@
+install.packages("ape")
+setwd("/Users/MuhammedH/github/FURI-SummerFall2024/ClusteringBenchmarks/GIANA_To_GIANA")
+source("tcr_analysis.R")
