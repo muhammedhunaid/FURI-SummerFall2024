@@ -38,7 +38,7 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import MDS
 import faiss
 #from query import *
-#from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import AgglomerativeClustering
 
 blosum62=substitution_matrices.load('BLOSUM62')
 AAstring='ACDEFGHIKLMNPQRSTVWY'
@@ -718,8 +718,8 @@ def MergeCL(Cls):
                 Cls_new.append(cc_merged)
     return Cls_new
 
-def EncodeRepertoire(inputfile, outdir, outfile='', exact=True, ST=3, thr_v=3.7, thr_s=3.5, VDict={}, Vgene=True, thr_iso=10, gap=-6, GPU=False, Mat=True, verbose=False, method='faiss', n_clusters=2, linkage='ward', affinity='euclidean'):
-        ## No V gene version
+def EncodeRepertoire(inputfile, outdir, outfile='',exact=True, ST=3, thr_v=3.7, thr_s=3.5, VDict={},Vgene=True,thr_iso=10, gap=-6, GPU=False,Mat=True, verbose=False):
+    ## No V gene version
     ## Encode CDR3 sequences into 96 dimensional space and perform k-means clustering
     ## If exact is True, SW alignment will be performed within each cluster after isometric encoding and clustering
     h=open(inputfile)
@@ -759,6 +759,11 @@ def EncodeRepertoire(inputfile, outdir, outfile='', exact=True, ST=3, thr_v=3.7,
         outfile=inputfile.split('/')
         outfile=outfile[len(outfile)-1]
         outfile=outdir+'/'+re.sub('\\.[txcsv]+','',outfile)+'-'+'-RotationEncodingBL62.txt'
+    
+    # Ensure the output directory exists
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
     g=open(outfile,'w')
     tm=strftime("%Y-%m-%d %H:%M:%S", gmtime())
     InfoLine='##TIME:'+tm+'|cmd: '+sys.argv[0]+'|'+inputfile+'|IsometricDistance_Thr='+str(thr_iso)+'|thr_v='+str(thr_v)+'|thr_s='+str(thr_s)+'|exact='+str(exact)+'|Vgene='+str(Vgene)+'|ST='+str(ST)
@@ -767,46 +772,35 @@ def EncodeRepertoire(inputfile, outdir, outfile='', exact=True, ST=3, thr_v=3.7,
     gr=0
     ## Split into different lengths
     LD,VD, ID,SD= BuildLengthDict(seqs, vGene=vgs,INFO=infoList,sIDs=[x for x in range(len(seqs))])
-
-    # Collapse identical TCRs
     LDu, VDu, IDu, SDu = CollapseUnique(LD, VD, ID, SD)
-    
-    # (previous code)
     if Mat:
-        Mfile = outfile + '_EncodingMatrix.txt'
-        h = open(Mfile, 'w')
+        Mfile=outfile+'_EncodingMatrix.txt'
+        h=open(Mfile, 'w')
     for kk in LDu:
         if verbose:
-            print("---Process CDR3s with length %d ---" % (kk))
-        vSD = LDu[kk]
-        vSD0 = [x for x in range(len(vSD))]
-        vss = SDu[kk]
-        vInfo = IDu[kk]
-        flagL = [len(x) - 1 for x in vInfo]
+            print("---Process CDR3s with length %d ---" %(kk))
+        vSD=LDu[kk]
+        vSD0=[x for x in range(len(vSD))]
+        vss=SDu[kk]
+        vInfo=IDu[kk]
+        flagL=[len(x)-1 for x in vInfo]
         if verbose:
             print(' Performing CDR3 encoding')
-        dM = np.array([EncodingCDR3(x[ST:-2], M6, n0) for x in vss])
-        dM = dM.astype("float32")
+        dM=np.array([EncodingCDR3(x[ST:-2], M6, n0) for x in vss])
+        dM=dM.astype("float32")
         if verbose:
-            print(" The number of sequences is %d" % (dM.shape[0]))
+            print(" The number of sequences is %d" %(dM.shape[0]))
         if Mat:
             for ii in range(len(vss)):
-                line = vss[ii] + '\t' + vInfo[ii][0] + '\t'
-                NUMs = [str(xx) for xx in dM[ii, :]]
+                line=vss[ii]+'\t'+vInfo[ii][0]+'\t'
+                NUMs=[str(xx) for xx in dM[ii,:]]
                 line += '\t'.join(NUMs) + '\n'
                 h.write(line)
-        sID = [x for x in range(dM.shape[0])]
-        t2 = time.time()
+        sID=[x for x in range(dM.shape[0])]
+        t2=time.time()
         if verbose:
-            print(' Done! Total time elapsed %f' % (t2 - t1))
-        if method == 'faiss':
-            print("in method k-means clustering")
-            Cls = ClusterCDR3(dM, flagL, thr=thr_iso - 0.5 * (15 - kk), verbose=verbose)
-        elif method == 'hierarchical':
-            Cls = HierarchicalClusteringCDR3(dM, flagL, n_clusters=n_clusters, linkage=linkage, affinity=affinity, verbose=verbose)
-        else:
-            raise ValueError("Unknown clustering method: {}".format(method))
-
+            print(' Done! Total time elapsed %f' %(t2-t1))
+        Cls = ClusterCDR3(dM, flagL, thr=thr_iso - 0.5*(15-kk), verbose=verbose)  ## change cutoff with different lengths
         Cls = MergeCL(Cls)
         if verbose:
             print("     Handling identical CDR3 groups")
@@ -951,7 +945,7 @@ def EncodeRepertoire(inputfile, outdir, outfile='', exact=True, ST=3, thr_v=3.7,
             for jj in cc:
                 for v_info in vInfo[jj]:
                     line=vss[jj]+'\t'+str(gr)+'\t'+v_info+'\n'
-                    g.write(line)
+                    _=g.write(line)
     g.close()
     if Mat:
         h.close()
@@ -1132,29 +1126,157 @@ def ClusterCDR3r(dM, flagL, thr = 10, verbose = False):
 def HierarchicalClusteringCDR3(dM, flagL, n_clusters=2, linkage='ward', affinity='euclidean', verbose=False):
     """
     Performs hierarchical clustering on the CDR3 embeddings.
-
+    
     Args:
     - dM: np.ndarray, the isometrically encoded sequences.
     - flagL: list, flags for identical CDR3 groups.
     - n_clusters: int, the number of clusters to find.
     - linkage: str, the linkage criterion to use ('ward', 'complete', 'average', 'single').
     - verbose: bool, whether to print intermediate messages.
-
+    
     Returns:
     - Cls: list of lists, each sublist contains indices of sequences belonging to the same cluster.
     """
+    print("here")
     if verbose:
         # print the clustering parameters
-        print("Clustering with n_clusters=%d, linkage=%s" %(n_clusters, linkage, affinity))
-
+        print("Clustering with n_clusters=%d, linkage=%s, affinity=%s" %(n_clusters, linkage, affinity))
+        
     clustering_model = AgglomerativeClustering(n_clusters=n_clusters, affinity=affinity, linkage=linkage)
     labels = clustering_model.fit_predict(dM)
+
+    print(labels)
+    print(type(labels))
+    print("here")
+    print("\n")
 
     Cls = [[] for _ in range(n_clusters)]
     for idx, label in enumerate(labels):
         Cls[label].append(idx)
-    print("here")
+        
     return Cls
+
+def EncodeRepertoire(inputfile, outdir, outfile='', exact=True, ST=3, thr_v=3.7, thr_s=3.5, VDict={}, Vgene=True, thr_iso=10, gap=-6, GPU=False, Mat=True, verbose=False, method='faiss', n_clusters=2, linkage='ward', affinity = 'euclidean'):
+    # Other code remains unchanged
+        ## No V gene version
+    ## Encode CDR3 sequences into 96 dimensional space and perform k-means clustering
+    ## If exact is True, SW alignment will be performed within each cluster after isometric encoding and clustering
+    h=open(inputfile)
+    t1=time.time()
+    alines=h.readlines()
+    ww=alines[0].strip().split('\t')
+    if not ww[0].startswith('C'):
+        ## header line
+        hline=alines[0]
+        alines=alines[1:]        
+    elif 'CDR3' in ww[0]:
+        hline=alines[0]
+        alines=alines[1:]
+    else:
+        hline='CDR3\t'+'\t'.join(['Info'+str(x) for x in range(len(ww)-1)])        
+    seqs=[]
+    vgs=[]
+    infoList=[]
+    count=0
+    if verbose:
+        print('Creating CDR3 list')
+    for ll in alines:
+        ww=ll.strip().split('\t')
+        cdr3=ww[0]
+        if '*' in cdr3:
+            continue
+        if '_' in cdr3:
+            continue
+        seqs.append(ww[0])
+        if Vgene:
+            vgs.append(ww[1])
+            infoList.append('\t'.join(ww[1:]))
+        else:
+            infoList.append('\t'.join(ww[1:]))
+        count+=1
+    if len(outfile)==0:
+        outfile=inputfile.split('/')
+        outfile=outfile[len(outfile)-1]
+        outfile=outdir+'/'+re.sub('\\.[txcsv]+','',outfile)+'-'+'-RotationEncodingBL62.txt'
+    # Ensure the output directory exists
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    g=open(outfile,'w')
+    tm=strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    InfoLine='##TIME:'+tm+'|cmd: '+sys.argv[0]+'|'+inputfile+'|IsometricDistance_Thr='+str(thr_iso)+'|thr_v='+str(thr_v)+'|thr_s='+str(thr_s)+'|exact='+str(exact)+'|Vgene='+str(Vgene)+'|ST='+str(ST)
+    g.write(InfoLine+'\n')
+    g.write("##Column Info: CDR3 aa sequence, cluster id, other information in the input file\n")
+    gr=0
+    ## Split into different lengths
+    LD,VD, ID,SD= BuildLengthDict(seqs, vGene=vgs,INFO=infoList,sIDs=[x for x in range(len(seqs))])
+    LDu, VDu, IDu, SDu = CollapseUnique(LD, VD, ID, SD)
+    if Mat:
+        Mfile=outfile+'_EncodingMatrix.txt'
+        h=open(Mfile, 'w')
+        ##Write to the embedding output file
+    
+    for kk in LDu:
+        if verbose:
+            print("---Process CDR3s with length %d ---" %(kk))
+        vSD=LDu[kk]
+        vSD0=[x for x in range(len(vSD))]
+        vss=SDu[kk]
+        vInfo=IDu[kk]
+        flagL=[len(x)-1 for x in vInfo]
+        if verbose:
+            print(' Performing CDR3 encoding')
+        dM=np.array([EncodingCDR3(x[ST:-2], M6, n0) for x in vss])
+        dM=dM.astype("float32")
+        ##print(dM.shape)
+        ##print(dM)
+        if verbose:
+            print(" The number of sequences is %d" %(dM.shape[0]))
+        if Mat:
+            for ii in range(len(vss)):
+                line=vss[ii]+'\t'+vInfo[ii][0]+'\t'
+                NUMs=[str(xx) for xx in dM[ii,:]]
+                line += '\t'.join(NUMs) + '\n'
+                h.write(line)
+        sID=[x for x in range(dM.shape[0])]
+        t2=time.time()
+        if verbose:
+            print(' Done! Total time elapsed %f' %(t2-t1))
+        
+        if method == 'hierarchical':
+            print("Using hierarchical clustering\nMethod: {0}\nN_clusters: {1}\nLinkage: {2}\nAffinity: {3}".format(method, n_clusters, linkage, affinity))
+            print('Calling HierarchicalClusteringCDR3')
+            Cls = HierarchicalClusteringCDR3(dM, flagL, n_clusters=n_clusters, linkage=linkage, affinity=affinity, verbose=verbose)
+        else:
+            Cls = ClusterCDR3(dM, flagL, thr=thr_iso - 0.5*(15-kk), verbose=verbose)
+        
+        Cls = MergeCL(Cls)
+        
+        if verbose:
+            print("     Handling identical CDR3 groups")
+        Cls_u=[]
+        for ii in range(len(Cls)):
+            cc=Cls[ii]
+            if len(cc) == 1:
+                ## Handle identical CDR3 groups first
+                if flagL[cc[0]]>0:
+                    gr += 1
+                    jj=cc[0]
+                    for v_info in vInfo[jj]:
+                        line=vss[jj]+'\t'+str(gr)+'\t'+v_info+'\n'
+                        _=g.write(line)
+            else:
+                Cls_u.append(cc)
+        Cls=Cls_u
+        t2=time.time()
+        if verbose:
+            print(' Done! Total time elapsed %f' %(t2-t1))
+        
+        # Continue with V gene processing and exact alignment as before
+    
+    g.close()
+    if Mat:
+        h.close()
 
 def CommandLineParser():
     parser = OptionParser()
@@ -1250,16 +1372,20 @@ def main():
         if len(FileDir)>0:
                 files=os.listdir(FileDir)
                 files0=[]
+                method = options.method
+                n_clusters = int(options.n_clusters)
+                linkage = options.linkage
+                affinity = options.affinity
                 for ff in files:
-                        ff=FileDir+'/'+ff
-                        files0.append(ff)
-                files=files0
+                    ff=FileDir+'/'+ff
+                    files0.append(ff)
+                    files=files0
         else:
                 files=[]
-        File=opt.File
+                File=opt.File
         if len(File)>0:
                 files=[File]
-        FileList=opt.files
+                FileList=opt.files
         if len(FileList)>0:
                 files=[]
                 fL=open(FileList)
@@ -1291,14 +1417,13 @@ def main():
         ed=1
         NT=int(opt.NN)
         faiss.omp_set_num_threads(NT)
-        method = opt.method
-        n_clusters = int(opt.n_clusters)
-        linkage = opt.linkage
-        affinity = opt.affinity
-
+        method = options.method
+        n_clusters = int(options.n_clusters)
+        linkage = options.linkage
+        affinity = options.affinity
         for ff in files:
             print("Processing %s" %ff)
-            EncodeRepertoire(ff, OutDir, OutFile, ST=ST, thr_s=thr_s, thr_v=thr_v, exact=EE,VDict=VScore, Vgene=VV, thr_iso=cutoff, gap=Gap, GPU=GPU, Mat=Mat, verbose=verbose)
+            EncodeRepertoire(ff, OutDir, OutFile, ST=ST, thr_s=thr_s, thr_v=thr_v, exact=EE, VDict=VScore, Vgene=VV, thr_iso=cutoff, gap=Gap, GPU=GPU, Mat=Mat, verbose=verbose, method=method, n_clusters=n_clusters, linkage=linkage, affinity=affinity)
         
 if __name__ == "__main__":
     t0=time.time()

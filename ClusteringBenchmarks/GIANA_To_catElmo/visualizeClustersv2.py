@@ -5,7 +5,7 @@ from collections import defaultdict
 from sklearn.metrics.cluster import normalized_mutual_info_score
 
 # Load the data
-file_path = '/Users/MuhammedH/github/FURI-SummerFall2024/ClusteringBenchmarks/GIANA_To_catElmo/results/tenClusters/tutorial--RotationEncodingBL62.txt'
+file_path = '/Users/MuhammedH/github/FURI-SummerFall2024/ClusteringBenchmarks/GIANA_To_catElmo/results/groundTruthClustersWithLinkageAndAffinity/trimmedTutorial--RotationEncodingBL62.txt'
 data = pd.read_csv(file_path, sep='\t', comment='#', header=None, names=['Sequence', 'ClusterID', 'Vgene', 'Info'])
 
 # Create a graph
