@@ -38,7 +38,7 @@ def calculate_purity_and_retention(file_path):
     retention_rate = tcrs_in_pure_clusters / total_tcrs
     
     print("The number of pure clusters:", pure_clusters)
-    print(f'Purity(%): {pure_clusters / len(clusters) * 100}')
+    print(f'Fraction(%): {pure_clusters / len(clusters) * 100}')
     print(f'Retention Rate(%): {retention_rate * 100}')
 
     # Output the modified data with the "Cluster Purity" column
@@ -49,7 +49,7 @@ def calculate_purity_and_retention(file_path):
         
         # Write metadata lines of results of this script
         writer.writerow(["## The number of pure clusters: " + str(pure_clusters)])
-        writer.writerow(["## Purity(%): " + str(pure_clusters / len(clusters) * 100)])
+        writer.writerow(["## Fraction(%): " + str(pure_clusters / len(clusters) * 100)])
         writer.writerow(["## Retention Rate(%): " + str(retention_rate * 100)])
 
         for row in reader:

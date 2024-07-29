@@ -1,5 +1,5 @@
 ## The number of pure clusters: 768
-## Purity(%): 7.552365030976498
+## Fraction(%): 7.552365030976498
 ## Retention Rate(%): 7.678549145210265
 ##TIME:2024-07-28 23:21:22|cmd: clustering.py|TCRantigenData_unique.txt|IsometricDistance_Thr=7.0|thr_v=3.7|thr_s=3.5|exact=True|Vgene=True|ST=3
 ##Column Info: CDR3 aa sequence, cluster id, other information in the input file
