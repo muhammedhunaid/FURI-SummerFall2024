@@ -1,7 +1,7 @@
 ## The number of pure clusters: 940
 ## Fraction(%): 9.227446745852557
 ## Retention Rate(%): 9.218326724510227
-##TIME:2024-07-31 21:55:33|cmd: clustering.py|filteredTCRantigenData_unique.txt|IsometricDistance_Thr=7.0|thr_v=3.7|thr_s=3.3|exact=True|Vgene=True|ST=3
+##TIME:2024-07-31 23:05:38|cmd: GIANA4.1.py|filteredTCRantigenData_unique.txt|IsometricDistance_Thr=7.0|thr_v=3.7|thr_s=3.3|exact=True|Vgene=True|ST=3
 ##Column Info: CDR3 aa sequence, cluster id, other information in the input file
 CAAGGVNQPQHF	1	TRBV28*01	0	0	Antigen:_FLYNLLTRV	Impure
 CAAGGVNQPQHF	1	TRBV28*01	0	0	Antigen:_FLYNLLTRV	Impure
@@ -1735,9 +1735,9 @@ CASSLGGNEQFF	745	TRBV12-1*01	0	0	Antigen:Severe acute respiratory syndrome coron
 CASSLGGNEQYF	745	TRBV12-1*01	0	0	Antigen:_AMFWSVPTV	Impure
 CASSFLGDEQFF	746	TRBV7-6*01	0	0	Antigen:GNL3L-R4C	Impure
 CASSFLGDEQFF	746	TRBV7-6*01	0	0	Antigen:_NLNCCSVPV	Impure
-CASSLGGNEQFF	747	TRBV7-9*01	0	0	Antigen:EBV_RAKFKQLL	Impure
-CASSLGSNEQFF	747	TRBV7-9*01	0	0	Antigen:CMV_KLGGALQAK	Impure
 CASSLASNEQFF	747	TRBV7-9*01	0	0	Antigen:HCV_ARMILMTHF	Impure
+CASSLGSNEQFF	747	TRBV7-9*01	0	0	Antigen:CMV_KLGGALQAK	Impure
+CASSLGGNEQFF	747	TRBV7-9*01	0	0	Antigen:EBV_RAKFKQLL	Impure
 CASSLVSNEQFF	747	TRBV7-9*01	0	0	Antigen:EBV_RAKFKQLL	Impure
 CASSFEGREQFF	748	TRBV7-9*01	0	0	Antigen:Severe acute respiratory syndrome coronavirus 2_AEIRASANLAATK	Impure
 CASSFEGNEQFF	748	TRBV7-9*01	0	0	Antigen:Human betaherpesvirus 5_NLVPMVATV	Impure

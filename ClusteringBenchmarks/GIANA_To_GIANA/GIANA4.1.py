@@ -761,6 +761,7 @@ def EncodeRepertoire(inputfile, outdir, outfile='',exact=True, ST=3, thr_v=3.7, 
         outfile=outdir+'/'+re.sub('\\.[txcsv]+','',outfile)+'-'+'-RotationEncodingBL62.txt'
     g=open(outfile,'w')
     tm=strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    print(thr_s)
     InfoLine='##TIME:'+tm+'|cmd: '+sys.argv[0]+'|'+inputfile+'|IsometricDistance_Thr='+str(thr_iso)+'|thr_v='+str(thr_v)+'|thr_s='+str(thr_s)+'|exact='+str(exact)+'|Vgene='+str(Vgene)+'|ST='+str(ST)
     g.write(InfoLine+'\n')
     g.write("##Column Info: CDR3 aa sequence, cluster id, other information in the input file\n")
@@ -1138,7 +1139,7 @@ Input columns:
     parser.add_option("-f","--file",dest="File",default='',help="Input single file of CDR3 sequences for grouping")
     parser.add_option("-F","--fileList",dest="files",default='',help='Alternative input: a file containing the full path to all the files. If given, overwrite -d and -f option')
     parser.add_option("-t","--threshold",dest="thr",default=7,help="Isometric distance threshold for calling similar CDR3 groups. Without -E, smaller value will increase speed. With -E, smaller value will increase specificity. Must be smaller than 12.")
-    parser.add_option("-S","--threshold_score",dest="thr_s",default=3.5, help="Threshold for Smith-Waterman alignment score (normalized by CDR3 length). Default 3.5")
+    parser.add_option("-S","--threshold_score",dest="thr_s",default=3.3, help="Threshold for Smith-Waterman alignment score (normalized by CDR3 length). Default 3.5")
     parser.add_option("-G","--threshold_vgene",dest="thr_v",default=3.7,help="Threshold for variable gene comparison. Default 3.7.")
     parser.add_option("-o","--output",dest="OutDir",default='./',help="Output directory for intermediate and final outputs.")
     parser.add_option("-O","--outfile",dest="OutFile",default='',help="Output file name. If not given, a file with --RotationEncoding will be added to the input file as the output file name.")
@@ -1159,7 +1160,7 @@ Input columns:
 def main():
     (opt,_)=CommandLineParser()
     cutoff=float(opt.thr)
-    OutDir=opt.OutDir
+    OutDir='./results'
     thr_s=float(opt.thr_s)
     ## Check if query mode first
     qFile=opt.Query
