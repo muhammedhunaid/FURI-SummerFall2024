@@ -64,5 +64,5 @@ def calculate_purity_and_retention(file_path):
     return pure_clusters / len(clusters), retention_rate
 
 # File path to the clustering output
-file_path = 'results/TCRantigenData_unique--RotationEncodingBL62.txt'
+file_path = 'results/filteredTCRantigenData_unique--RotationEncodingBL62.txt'
 purity, retention_rate = calculate_purity_and_retention(file_path)

@@ -754,6 +754,7 @@ def EncodeRepertoire(inputfile, outdir, outfile='',exact=True, ST=3, thr_v=3.7, 
         else:
             infoList.append('\t'.join(ww[1:]))
         count+=1
+
     if len(outfile)==0:
         outfile=inputfile.split('/')
         outfile=outfile[len(outfile)-1]
@@ -1257,4 +1258,3 @@ if __name__ == "__main__":
     main()
     print ("Total time elapsed: %f" %(time.time()-t0))
     print ("Maximum memory usage: %f MB" %(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1000000))
-

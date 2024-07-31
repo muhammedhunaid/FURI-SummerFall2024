@@ -1,4 +1,4 @@
-##TIME:2024-07-29 03:01:52|cmd: GIANA4.py|tmp_query.txt|IsometricDistance_Thr=7.0|thr_v=3.7|thr_s=3.3|exact=True|Vgene=True|ST=3
+ ##TIME:2024-07-29 03:01:52|cmd: GIANA4.py|tmp_query.txt|IsometricDistance_Thr=7.0|thr_v=3.7|thr_s=3.3|exact=True|Vgene=True|ST=3
 ##Column Info: CDR3 aa sequence, cluster id, other information in the input file
 CASGTGGGNTIYF	1	TRBV30*01	7.58394478888194e-06	0.628627176305783	COVID19:ADIRP0000023_TCRB.tsv	query
 CASGTGGGNTIYF	1	TRBV30*01	6.31995399073495e-06	0.524264558735241	COVID19:ADIRP0000023_TCRB.tsv	query
