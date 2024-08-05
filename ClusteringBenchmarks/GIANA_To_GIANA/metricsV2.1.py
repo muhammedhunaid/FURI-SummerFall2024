@@ -1,6 +1,6 @@
 import csv
 from collections import defaultdict, Counter
-
+#Added feature to also calculate purity and retention rate based on ClusTCR's alternative definitions
 def calculate_purity_and_retention(clustered_file_path, reference_file_path):
     clusters = defaultdict(list)
     total_tcrs = 0
@@ -29,7 +29,7 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
     cluster_purity_dict = {}
     count_pure_clusters_alt = 0
 
-    # Calculate purity, alternative purity, and retention, and output the results
+    # Calculate purity, alternative purity, retention, alternative retention and output the results
     for cluster_id, tcr_list in clusters.items():
         antigen_counts = Counter([antigen for _, antigen in tcr_list])
         most_common_antigen, count = antigen_counts.most_common(1)[0]
@@ -65,6 +65,8 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
     specificity = count_pure_clusters_alt / len(clusters)
     sensitivity = sum_most_common_alt / total_reference_tcrs
 
+    print(f"The number of clusters: {str(len(clusters))}")
+    print(f"The number of pure clusters (alternative): {count_pure_clusters_alt}")
     print(f"Purity: {purity}")
     print(f"Retention Rate: {retention_rate}")
     print(f"Purity (Alternative): {purity_alt}")
@@ -79,6 +81,8 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
         writer = csv.writer(outfile, delimiter='\t')
 
         # Write metadata lines of results of this script
+        writer.writerow(["## The number of clusters: " + str(len(clusters))])
+        writer.writerow(["## The number of pure clusters (alternative):  " + str(count_pure_clusters_alt)])
         writer.writerow(["## The number of most common tcrs in every cluster: " + str(sum_most_common)])
         writer.writerow(["## The number of most common tcrs in every cluster (Alternative): " + str(sum_most_common_alt)])
         writer.writerow(["## The number of total tcrs in every cluster (Alternative): " + str(total_tcrs_alt)])
