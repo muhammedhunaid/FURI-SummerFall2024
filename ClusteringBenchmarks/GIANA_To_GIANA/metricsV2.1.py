@@ -33,6 +33,7 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
     for cluster_id, tcr_list in clusters.items():
         antigen_counts = Counter([antigen for _, antigen in tcr_list])
         most_common_antigen, count = antigen_counts.most_common(1)[0]
+        print("Most common Antigen for each cluster",cluster_id, most_common_antigen, count)
         cluster_size = len(tcr_list)
         sum_most_common += count
 
