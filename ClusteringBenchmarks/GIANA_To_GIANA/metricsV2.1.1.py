@@ -85,6 +85,7 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
         writer.writerow(["## The number of most common tcrs in pure clusters (Local Purity == 1): " + str(sum_most_common_alt)])
         writer.writerow(["## The number of total tcrs in pure cluster (Local Purity == 1): " + str(total_tcrs_alt)])
         writer.writerow(["## The number of total tcrs in every cluster: " + str(total_tcrs)])
+        writer.writerow(["## The number of total tcrs in every cluster: " + str(total_reference_tcrs)])
         writer.writerow(["## Purity (Using TCR's from all clusters):: " + str(purity)])
         #writer.writerow(["## Retention Rate: " + str(retention_rate)])
         writer.writerow(["## Purity (Using TCR's from Clusters with Local Purity == 1): " + str(purity_alt)])
