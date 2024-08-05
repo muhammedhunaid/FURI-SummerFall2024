@@ -3,6 +3,8 @@
 ## The number of most common tcrs in every cluster: 23629
 ## The number of most common tcrs in pure clusters (Local Purity == 1): 20631
 ## The number of total tcrs in pure cluster (Local Purity == 1): 20631
+## The number of total tcrs in every cluster: 25471
+## The number of total tcrs in reference input file: 61057
 ## Purity (Using TCR's from all clusters):: 0.9276824624082289
 ## Purity (Using TCR's from Clusters with Local Purity == 1): 1.0
 ## Retention Rate (Using TCR's from Clusters with Local Purity == 1): 0.3378973745844047
