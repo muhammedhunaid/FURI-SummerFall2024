@@ -26,6 +26,7 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
 
     sum_most_common = 0
     sum_most_common_alt = 0
+    one_most_common_total = 0
     total_tcrs_alt = 0
     cluster_purity_dict = {}
     count_pure_clusters_alt = 0
@@ -34,6 +35,9 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
     for cluster_id, tcr_list in clusters.items():
         antigen_counts = Counter([antigen for _, antigen in tcr_list])
         most_common_count = antigen_counts.most_common(1)[0][1]
+
+        # Calculate the total count for only the first most common antigen for each cluster
+        one_most_common_total += most_common_count
 
         # Calculate the total count for the most common antigens
         most_common_total = sum(count for _, count in antigen_counts.items() if count == most_common_count)
@@ -54,6 +58,7 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
             cluster_purity_dict[cluster_id] = "Impure"
 
     # Calculate purity and retention rate based on new definitions
+    not_reliable_purity = one_most_common_total / total_tcrs
     purity = sum_most_common / total_tcrs
     purity_alt = sum_most_common_alt / total_tcrs_alt if total_tcrs_alt != 0 else 0
     retention_rate = total_tcrs / total_reference_tcrs
@@ -66,14 +71,15 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
     print(f"The number of clusters: {str(len(clusters))}")
     print(f"The number of pure clusters (Local Purity == 1): {count_pure_clusters_alt}")
     print(f"Purity (Using TCR's from all clusters): {purity}")
-    #print(f"Retention Rate: {retention_rate}")
+    print(f"Not Reliable Purity (Using only the first most common TCR's from all clusters): {not_reliable_purity}")
     print(f"Purity (Using TCR's from Clusters with Local Purity == 1): {purity_alt}")
+    print(f"Retention Rate: {retention_rate}")
     print(f"Retention Rate (Using TCR's from Clusters with Local Purity == 1): {retention_rate_alt}")
     print(f"Sensitivity (Retention): {retention_rate_alt}")
     print(f"Specificity (Fraction): {specificity}")
 
     # Output the modified data with the "Cluster Purity" column
-    output_file = "grayClusterPurityResultsV2.1.1.tsv"
+    output_file = "ClusterPurityResultsV2.1.1.tsv"
     with open(clustered_file_path, 'r') as infile, open(output_file, 'w', newline='') as outfile:
         reader = csv.reader(infile, delimiter='\t')
         writer = csv.writer(outfile, delimiter='\t')
@@ -86,9 +92,10 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
         writer.writerow(["## The number of total tcrs in pure cluster (Local Purity == 1): " + str(total_tcrs_alt)])
         writer.writerow(["## The number of total tcrs in every cluster: " + str(total_tcrs)])
         writer.writerow(["## The number of total tcrs in reference input file: " + str(total_reference_tcrs)])
-        writer.writerow(["## Purity (Using TCR's from all clusters):: " + str(purity)])
-        writer.writerow(["## Retention Rate: " + str(retention_rate)])
+        writer.writerow(["## Purity (Using TCR's from all clusters): " + str(purity)])
+        writer.writerow(["## Not Reliable Purity (Using only the first most common TCR's from all clusters; might by Universal): {not_reliable_purity}"])
         writer.writerow(["## Purity (Using TCR's from Clusters with Local Purity == 1): " + str(purity_alt)])
+        writer.writerow(["## Retention Rate (Universal): " + str(retention_rate)])
         writer.writerow(["## Retention Rate (Using TCR's from Clusters with Local Purity == 1): " + str(retention_rate_alt)])
         writer.writerow(["## Sensitivity (Retention): " + str(retention_rate_alt)])
         writer.writerow(["## Specificity (Fraction): " + str(specificity)])
@@ -105,6 +112,6 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
     return purity, purity_alt, retention_rate, retention_rate_alt
 
 # File paths to the clustered output and filtered reference input
-clustered_file_path = '../results/filteredTCRantigenData_unique--RotationEncodingBL62.txt'
-reference_file_path = '../results/filteredTCRantigenData_unique.txt'
+clustered_file_path = 'results/filteredTCRantigenData_unique--RotationEncodingBL62.txt'
+reference_file_path = 'results/filteredTCRantigenData_unique.txt'
 purity, purity_alt, retention_rate, retention_rate_alt = calculate_purity_and_retention(clustered_file_path, reference_file_path)

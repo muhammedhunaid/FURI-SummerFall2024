@@ -1,4 +1,4 @@
-##TIME:2024-07-31 23:05:38|cmd: GIANA4.1.py|filteredTCRantigenData_unique.txt|IsometricDistance_Thr=7.0|thr_v=3.7|thr_s=3.3|exact=True|Vgene=True|ST=3
+##TIME:2024-08-20 02:54:33|cmd: GIANA4.1.py|filteredTCRantigenData_unique.txt|IsometricDistance_Thr=7.0|thr_v=3.7|thr_s=3.3|exact=True|Vgene=True|ST=3
 ##Column Info: CDR3 aa sequence, cluster id, other information in the input file
 CAAGGVNQPQHF	1	TRBV28*01	0	0	Antigen:_FLYNLLTRV
 CAAGGVNQPQHF	1	TRBV28*01	0	0	Antigen:_FLYNLLTRV
@@ -1732,9 +1732,9 @@ CASSLGGNEQFF	745	TRBV12-1*01	0	0	Antigen:Severe acute respiratory syndrome coron
 CASSLGGNEQYF	745	TRBV12-1*01	0	0	Antigen:_AMFWSVPTV
 CASSFLGDEQFF	746	TRBV7-6*01	0	0	Antigen:GNL3L-R4C
 CASSFLGDEQFF	746	TRBV7-6*01	0	0	Antigen:_NLNCCSVPV
-CASSLASNEQFF	747	TRBV7-9*01	0	0	Antigen:HCV_ARMILMTHF
-CASSLGSNEQFF	747	TRBV7-9*01	0	0	Antigen:CMV_KLGGALQAK
 CASSLGGNEQFF	747	TRBV7-9*01	0	0	Antigen:EBV_RAKFKQLL
+CASSLGSNEQFF	747	TRBV7-9*01	0	0	Antigen:CMV_KLGGALQAK
+CASSLASNEQFF	747	TRBV7-9*01	0	0	Antigen:HCV_ARMILMTHF
 CASSLVSNEQFF	747	TRBV7-9*01	0	0	Antigen:EBV_RAKFKQLL
 CASSFEGREQFF	748	TRBV7-9*01	0	0	Antigen:Severe acute respiratory syndrome coronavirus 2_AEIRASANLAATK
 CASSFEGNEQFF	748	TRBV7-9*01	0	0	Antigen:Human betaherpesvirus 5_NLVPMVATV
