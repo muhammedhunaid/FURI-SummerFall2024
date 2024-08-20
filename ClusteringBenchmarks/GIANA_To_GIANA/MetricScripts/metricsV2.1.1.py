@@ -49,7 +49,7 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
         local_purity = most_common_total / cluster_size
 
         # Check for Alternative Purity condition
-        if local_purity == 1.0:
+        if local_purity >= 0.9:
             sum_most_common_alt += most_common_total
             total_tcrs_alt += cluster_size
             cluster_purity_dict[cluster_id] = "Pure"
@@ -69,12 +69,12 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
     #sensitivity = total_tcrs_alt / total_reference_tcrs
 
     print(f"The number of clusters: {str(len(clusters))}")
-    print(f"The number of pure clusters (Local Purity == 1): {count_pure_clusters_alt}")
-    print(f"Purity (Using TCR's from all clusters): {purity}")
-    print(f"Not Reliable Purity (Using only the first most common TCR's from all clusters): {not_reliable_purity}")
-    print(f"Purity (Using TCR's from Clusters with Local Purity == 1): {purity_alt}")
-    print(f"Retention Rate: {retention_rate}")
-    print(f"Retention Rate (Using TCR's from Clusters with Local Purity == 1): {retention_rate_alt}")
+    print(f"The number of pure clusters (Local Purity >= 0.9): {count_pure_clusters_alt}")
+    print(f"Purity (Using all most common occuring TCRs from all clusters): {purity}")
+    print(f"Not Reliable Purity (Using only the first most common TCRs from all clusters): {not_reliable_purity}")
+    print(f"Purity (Using all most common occuring TCRs from Clusters with Local Purity >= 0.9): {purity_alt}")
+    print(f"Retention Rate (Universal): {retention_rate}")
+    print(f"Retention Rate (Using all TCRs from Clusters with Local Purity >= 0.9): {retention_rate_alt}")
     print(f"Sensitivity (Retention): {retention_rate_alt}")
     print(f"Specificity (Fraction): {specificity}")
 
@@ -86,17 +86,17 @@ def calculate_purity_and_retention(clustered_file_path, reference_file_path):
 
         # Write metadata lines of results of this script
         writer.writerow(["## The number of clusters: " + str(len(clusters))])
-        writer.writerow(["## The number of pure clusters (Local Purity == 1):  " + str(count_pure_clusters_alt)])
+        writer.writerow(["## The number of pure clusters (Local Purity >= 0.9):  " + str(count_pure_clusters_alt)])
         writer.writerow(["## The number of most common tcrs in every cluster: " + str(sum_most_common)])
-        writer.writerow(["## The number of most common tcrs in pure clusters (Local Purity == 1): " + str(sum_most_common_alt)])
-        writer.writerow(["## The number of total tcrs in pure cluster (Local Purity == 1): " + str(total_tcrs_alt)])
+        writer.writerow(["## The number of most common tcrs in pure clusters (Local Purity >= 0.9): " + str(sum_most_common_alt)])
+        writer.writerow(["## The number of total tcrs in pure cluster (Local Purity >= 0.9): " + str(total_tcrs_alt)])
         writer.writerow(["## The number of total tcrs in every cluster: " + str(total_tcrs)])
         writer.writerow(["## The number of total tcrs in reference input file: " + str(total_reference_tcrs)])
-        writer.writerow(["## Purity (Using TCR's from all clusters): " + str(purity)])
-        writer.writerow(["## Not Reliable Purity (Using only the first most common TCR's from all clusters; might by Universal): {not_reliable_purity}"])
-        writer.writerow(["## Purity (Using TCR's from Clusters with Local Purity == 1): " + str(purity_alt)])
+        writer.writerow(["## Purity (Using all most common occuring TCRs from all clusters): " + str(purity)])
+        writer.writerow(["## Not Reliable Purity (Using only the first most common TCR's from all clusters; might by Universal): "+ str(not_reliable_purity)])
+        writer.writerow(["## Purity (Using all most common occuring TCRs from Clusters with Local Purity >= 0.9): " + str(purity_alt)])
         writer.writerow(["## Retention Rate (Universal): " + str(retention_rate)])
-        writer.writerow(["## Retention Rate (Using TCR's from Clusters with Local Purity == 1): " + str(retention_rate_alt)])
+        writer.writerow(["## Retention Rate (Using all TCRs from Clusters with Local Purity >= 0.9): " + str(retention_rate_alt)])
         writer.writerow(["## Sensitivity (Retention): " + str(retention_rate_alt)])
         writer.writerow(["## Specificity (Fraction): " + str(specificity)])
 
